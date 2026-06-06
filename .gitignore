@@ -13,3 +13,22 @@ CLIENT/
 WORK/
 ENV/
 DELETE/
+
+# 設計ドキュメント
+next-gen-cleaning-robot-demo_design.md
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.db
+
+# Node.js / Next.js
+node_modules/
+frontend/.next/
+frontend/dist/
+frontend/.env.local
+
+# Test artifacts
+test-results/
+playwright-report/
