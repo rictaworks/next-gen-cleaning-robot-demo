@@ -35,16 +35,16 @@
 
 TDD サイクル: **plan → red test → coding → green test**
 
-- **バックエンド**: RSpec
-- **フロントエンド**: Jest / React Testing Library
-- **E2E**: Playwright
-- **フロント動作確認**: `curl`, `wget --mirror`, Playwright を使用すること
+- **バックエンド**: pytest (`pytest test/pr***/ -v`)
+- **フロントエンド**: Jest / React Testing Library (`cd frontend && npm test`)
+- **E2E**: Playwright (`cd frontend && npx playwright test`)
+- **フロント動作確認**: `curl`, Playwright を使用すること
 - テストは `test/pr***/` ディレクトリに作成すること
 - テストの対象は開発サーバーとすること
-- TM.md に記載されたテスト手法に従うこと
-- QC10.md の品質チェック項目を満たすこと
-- OWASP10.md の脆弱性対策を実施すること
-- CC.md のコンプライアンス項目を確認すること
+- @.claude/TM.md に記載されたテスト手法に従うこと
+- @.claude/QC10.md の品質チェック項目を満たすこと
+- @.claude/OWASP10.md の脆弱性対策を実施すること
+- @.claude/CC.md のコンプライアンス項目を確認すること
 - **commit 前に必ず security review を実施すること**
 
 ---
@@ -67,17 +67,23 @@ TDD サイクル: **plan → red test → coding → green test**
 
 ## 技術スタック
 
-### 基本構成
+### デモ版（現在の実装）
 
 - **フロントエンド**: Next.js 15 (App Router) + TypeScript + Tailwind CSS
+- **バックエンド**: FastAPI (Python)
+- **データベース**: SQLite（デモ版固定・毎日 JST 03:00 自動リセット）
+- **認証**: なし（セッション ID のみ、Cookie: httponly/samesite=lax）
+- **アイコン**: Font Awesome
+
+### 本番版（将来対応）
+
 - **バックエンド**: Ruby on Rails 8 (API モード)
 - **データベース**: PostgreSQL 16
 - **認証**: Google OAuth 2.0
-- **アイコン**: Font Awesome
 
 ### 追加スタック（必要な場合）
 
-- **AI・解析・画像加工**: FastAPI
+- **AI・解析・画像加工**: FastAPI（デモ版ではルールベース BFS で代替）
 - **高速並列処理・リアルタイム通信**: Gin (Go)
 
 ### アーキテクチャ
@@ -85,6 +91,24 @@ TDD サイクル: **plan → red test → coding → green test**
 - 規模に応じてマイクロサービス / MVC / API Gateway / メッセージングを意識すること
 - メンテナンスコストとセキュリティを優先し、安全なライブラリを選択すること
 - 車輪の再発明を避け、オリジナルコードを少なく保つこと
+
+---
+
+## 開発サーバー起動
+
+```bash
+# バックエンド（ポート 8000）
+pip install -r backend/requirements.txt
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+
+# フロントエンド（ポート 3000）
+cd frontend && npm install && npm run dev
+
+# 一括起動（Docker Compose）
+docker compose up
+```
+
+環境変数は `.env` を参照（`DATABASE_URL`, `CORS_ORIGINS`, `SESSION_EXPIRE_HOURS` 等）。
 
 ---
 
@@ -150,7 +174,8 @@ TDD サイクル: **plan → red test → coding → green test**
 
 ## エージェント構成（.claude/agents/）
 
-規模に応じて以下のエージェントを作成すること:
+> **未作成・今後対応** — `.claude/agents/` ディレクトリは現在空。規模に応じて以下のエージェントを順次作成すること:
+
 
 | エージェント | 役割 |
 |---|---|
@@ -177,6 +202,6 @@ TDD サイクル: **plan → red test → coding → green test**
 ### tester
 
 - 全 PR 対象として、PR に書かれたユーザーテスト手順の実行スクリプトを作成すること
-- TM.md に記載されたテストを作成すること（jest, rspec など）
+- @.claude/TM.md に記載されたテストを作成すること（pytest, jest など）
 - テストは `test/pr***/` に作成すること
 - テストの対象は開発サーバーとすること
