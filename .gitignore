@@ -1,0 +1,15 @@
+# 環境変数
+.env
+.env.*
+!.env.example
+
+# Claude 設定
+.claude/
+
+# 運用ドキュメント（SPEC/ は追跡対象）
+TASKS/
+DEBUG/
+CLIENT/
+WORK/
+ENV/
+DELETE/
