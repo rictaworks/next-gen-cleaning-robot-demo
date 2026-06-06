@@ -14,6 +14,9 @@ WORK/
 ENV/
 DELETE/
 
+# 設計ドキュメント
+next-gen-cleaning-robot-demo_design.md
+
 # Python
 __pycache__/
 *.pyc
