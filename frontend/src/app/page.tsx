@@ -52,7 +52,17 @@ export default function HomePage() {
             <FontAwesomeIcon icon={faRobot} className="text-blue-600" />
             {t.title}
           </h1>
-          <LanguageSwitcher locale={locale} onChange={handleLocaleChange} />
+          <nav className="flex items-center gap-4">
+            <LanguageSwitcher locale={locale} onChange={handleLocaleChange} />
+            <span className="border-l border-gray-300 pl-4">
+              <a
+                href="https://rictaworks.jp/#demos"
+                className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors duration-150"
+              >
+                ← デモ一覧へ
+              </a>
+            </span>
+          </nav>
         </div>
       </header>
 
