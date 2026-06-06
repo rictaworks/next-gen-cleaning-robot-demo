@@ -13,3 +13,19 @@ CLIENT/
 WORK/
 ENV/
 DELETE/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.db
+
+# Node.js / Next.js
+node_modules/
+frontend/.next/
+frontend/dist/
+frontend/.env.local
+
+# Test artifacts
+test-results/
+playwright-report/
