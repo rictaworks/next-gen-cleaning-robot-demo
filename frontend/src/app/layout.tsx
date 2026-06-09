@@ -3,8 +3,8 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Next-Gen Cleaning Robot Demo",
-  description: "Cleaning robot simulation demo",
+  title: "次世代掃除ロボットデモ",
+  description: "次世代掃除ロボットのシミュレーションデモ",
 };
 
 export default function RootLayout({
