@@ -8,7 +8,7 @@ from backend.database import get_db, init_db
 from backend.services.session_service import get_or_create_session
 from backend.services.reset_scheduler import start_scheduler, stop_scheduler
 from backend.schemas import SessionResponse
-from backend.routers import maps, robots, jobs
+from backend.routers import maps, robots, jobs, esp32
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,6 +41,7 @@ app.add_middleware(
 app.include_router(maps.router)
 app.include_router(robots.router)
 app.include_router(jobs.router)
+app.include_router(esp32.router)
 
 
 @app.get("/", response_model=SessionResponse)

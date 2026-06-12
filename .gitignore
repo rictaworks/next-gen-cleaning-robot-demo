@@ -1,3 +1,6 @@
+# Firmware secrets
+firmware/**/secrets.h
+
 # 環境変数
 .env
 .env.*
