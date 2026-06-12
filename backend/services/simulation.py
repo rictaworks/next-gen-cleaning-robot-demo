@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from backend.models import Job, Robot, RobotPosition, JobEvent, MapCell, Map
 from backend.services.pathfinder import calculate_path
+from backend.services import esp32_state
 from backend.database import AsyncSessionLocal
 
 logger = logging.getLogger(__name__)
@@ -70,6 +71,7 @@ async def _run_simulation(db: AsyncSession, job_id: str) -> None:
     )
     await db.commit()
 
+    esp32_state.set_fan_command("on")
     await _record_event(db, job_id, "JOB_STARTED", None, None)
 
     grid = {(c.x, c.y): c.cell_type for c in cells}
@@ -135,6 +137,7 @@ async def _run_simulation(db: AsyncSession, job_id: str) -> None:
         update(Robot).where(Robot.id == job.robot_id).values(status="IDLE")
     )
     await db.commit()
+    esp32_state.set_fan_command("off")
     await _record_event(db, job_id, "JOB_COMPLETED", None, None)
 
 
@@ -166,6 +169,7 @@ async def _mark_cancelled(db: AsyncSession, job_id: str) -> None:
             update(Robot).where(Robot.id == job.robot_id).values(status="IDLE")
         )
         await db.commit()
+    esp32_state.set_fan_command("off")
 
 
 async def _mark_failed(db: AsyncSession, job_id: str) -> None:
@@ -179,3 +183,4 @@ async def _mark_failed(db: AsyncSession, job_id: str) -> None:
             update(Robot).where(Robot.id == job.robot_id).values(status="ERROR")
         )
         await db.commit()
+    esp32_state.set_fan_command("off")
