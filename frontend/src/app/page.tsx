@@ -11,6 +11,7 @@ import RobotForm from "@/components/RobotForm";
 import JobPanel from "@/components/JobPanel";
 import PositionMonitor from "@/components/PositionMonitor";
 import JobHistory from "@/components/JobHistory";
+import SensorMonitor from "@/components/SensorMonitor";
 
 type Tab = "map" | "robot" | "job" | "history";
 
@@ -121,9 +122,12 @@ export default function HomePage() {
             />
           )}
           {tab === "job" && (
-            <div className="grid md:grid-cols-2 gap-8">
-              <JobPanel t={t} robotId={robotId} mapId={mapId} />
-              <PositionMonitor t={t} robotId={robotId} />
+            <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-8">
+                <JobPanel t={t} robotId={robotId} mapId={mapId} />
+                <PositionMonitor t={t} robotId={robotId} />
+              </div>
+              <SensorMonitor t={t} />
             </div>
           )}
           {tab === "history" && <JobHistory t={t} />}

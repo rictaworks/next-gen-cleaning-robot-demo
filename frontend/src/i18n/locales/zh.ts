@@ -81,6 +81,13 @@ const zh = {
     required: "此字段为必填项",
     session: "会话无效，请重新加载页面",
   },
+  sensor: {
+    heading: "环境传感器（ESP32）",
+    temperature: "温度",
+    humidity: "湿度",
+    updated: "更新时间",
+    no_data: "无传感器数据",
+  },
   reset_notice: "演示数据每天 JST 03:00 重置",
 };
 

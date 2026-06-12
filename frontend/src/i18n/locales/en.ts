@@ -90,6 +90,13 @@ const en = {
     required: "This field is required",
     session: "Session invalid. Please reload the page",
   },
+  sensor: {
+    heading: "Environment Sensor (ESP32)",
+    temperature: "Temperature",
+    humidity: "Humidity",
+    updated: "Updated",
+    no_data: "No sensor data",
+  },
   reset_notice: "Demo data resets daily at 03:00 JST",
 };
 

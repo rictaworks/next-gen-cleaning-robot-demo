@@ -90,6 +90,13 @@ const ja = {
     required: "必須項目です",
     session: "セッションが無効です。ページを再読み込みしてください",
   },
+  sensor: {
+    heading: "環境センサー（ESP32）",
+    temperature: "温度",
+    humidity: "湿度",
+    updated: "更新日時",
+    no_data: "センサーデータなし",
+  },
   reset_notice: "デモデータは毎日 JST 03:00 にリセットされます",
 };
 

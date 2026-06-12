@@ -81,6 +81,13 @@ const es = {
     required: "Este campo es obligatorio",
     session: "Sesion invalida. Por favor recargue la pagina",
   },
+  sensor: {
+    heading: "Sensor ambiental (ESP32)",
+    temperature: "Temperatura",
+    humidity: "Humedad",
+    updated: "Actualizado",
+    no_data: "Sin datos del sensor",
+  },
   reset_notice: "Los datos de demo se reinician diariamente a las 03:00 JST",
 };
 

@@ -139,6 +139,12 @@ export interface JobHistoryResponse {
   total: number;
 }
 
+export interface SensorResponse {
+  temperature: number;
+  humidity: number;
+  updated_at: string;
+}
+
 export const api = {
   init: () => request<{ session_id: string; expires_at: string }>("/"),
 
@@ -168,4 +174,6 @@ export const api = {
     ),
 
   getHistory: () => request<JobHistoryResponse>("/jobs/history"),
+
+  getSensor: () => request<SensorResponse>("/esp32/sensor"),
 };
