@@ -9,11 +9,14 @@
 
 | レイヤー | 技術 |
 |---------|------|
-| フロントエンド | Next.js 15 (App Router) + TypeScript + Tailwind CSS |
-| バックエンド | FastAPI (Python) |
-| データベース | SQLite（デモ版固定） |
+| フロントエンド | Next.js 15 (App Router・静的書き出し) + TypeScript + Tailwind CSS |
+| バックエンド | Cloudflare Workers + Hono (TypeScript) |
+| データベース | Cloudflare D1（SQLite 互換）。毎日 JST 03:00 に全データをリセット |
+| 配信 | Workers Assets（フロントエンドと API を同一オリジンで配信。API は `/api`） |
 | 認証 | なし（セッション ID のみ） |
 | アイコン | Font Awesome |
+
+2026-11 に Railway（FastAPI + SQLite）と Vercel から Cloudflare へ移行した。`backend/`（FastAPI）と `railway.json`・`docker-compose.yml`・`vercel.json` は移行前の構成で、現行の実行経路ではない。
 
 ---
 
@@ -31,55 +34,57 @@
 
 ### 前提条件
 
-- Python 3.12+
-- Node.js 20.x LTS
+- Node.js 22.13 以上（テストで組み込みの `node:sqlite` を使用。検証は Node 24）
+- Python 3.12+（pytest による統合テストを実行する場合のみ）
 
-### バックエンド起動（ポート 8000）
-
-```bash
-pip install -r backend/requirements.txt
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-### フロントエンド起動（ポート 3000）
+### 1. フロントエンドを静的書き出し
 
 ```bash
 cd frontend
-npm install
-npm run dev
+npm ci
+npm run build    # frontend/out/ に書き出す（Worker が配信する）
 ```
 
-### Docker Compose（一括起動）
+### 2. Worker（API と D1）起動（ポート 8787）
 
 ```bash
-docker compose up
+cd worker
+npm ci
+npm run db:migrate:local   # ローカル D1 にスキーマを適用（migrations/）
+npm run dev                # wrangler dev --port 8787
 ```
+
+### 3. フロントエンド開発サーバー（ポート 3000）
+
+```bash
+cd frontend
+npm run dev    # /api/* を API_ORIGIN（既定 http://127.0.0.1:8787）へ転送する
+```
+
+ブラウザでは http://localhost:3000 を開く。Worker だけで確認する場合は http://localhost:8787 を開く。
 
 ### 環境変数
 
-`.env` を参照（リポジトリには `.env.example` を用意予定）:
+`.env.example` を参照（変数名と値の例のみ。秘密値は使わない）。
 
-```
-ENVIRONMENT=development
-DATABASE_URL=sqlite+aiosqlite:///./demo.db
-SESSION_EXPIRE_HOURS=24
-RESET_HOUR_JST=3
-CORS_ORIGINS=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
+- `API_ORIGIN`（frontend・開発時のみ）: `/api/*` の転送先
+- Worker の設定（`ENVIRONMENT`・`SESSION_EXPIRE_HOURS`・D1 バインディング・日次リセットの cron）は `worker/wrangler.jsonc` で管理する
 
 ---
 
 ## テスト実行
 
 ```bash
-# バックエンド統合テスト（サーバー起動後）
+# Worker の型検査と単体・結合テスト（テストは test/pr002/worker/）
+cd worker && npm run typecheck && npm test
+
+# バックエンド統合テスト（wrangler dev 起動後・http://localhost:8787/api）
 pytest test/pr001/test_backend.py -v
 
-# E2E テスト（両サーバー起動後）
+# E2E テスト（wrangler dev と next dev の両方を起動後）
 cd frontend && npx playwright test
 
-# フロントエンドビルド確認
+# フロントエンドビルド確認（型検査を含む）
 cd frontend && npm run build
 ```
 

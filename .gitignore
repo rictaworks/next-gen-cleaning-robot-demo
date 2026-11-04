@@ -29,8 +29,13 @@ __pycache__/
 # Node.js / Next.js
 node_modules/
 frontend/.next/
+frontend/out/
 frontend/dist/
 frontend/.env.local
+
+# Cloudflare Workers（wrangler のローカル状態・D1 のローカル DB・ローカル開発用の秘密変数）
+.wrangler/
+.dev.vars*
 
 # Test artifacts
 test-results/

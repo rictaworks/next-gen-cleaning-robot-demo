@@ -1,8 +1,8 @@
 # API 仕様書
 
-最終更新: 2026-06-06
+最終更新: 2026-11-04（Cloudflare Workers + D1 へ移行。パスは変更なし、ベース URL のみ変更）
 
-ベース URL: `http://localhost:8000`
+ベース URL: `/api`（同一オリジン。ローカルは `http://localhost:8787/api`）。以下のパスはすべてこのベース URL からの相対パス。
 
 認証: Cookie `session_id`（GET / で自動発行）
 
