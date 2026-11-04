@@ -1,0 +1,69 @@
+{
+  // Cloudflare Workers（Hono）+ D1 + Workers Assets。
+  // フロントエンド（frontend/ の Next.js 静的書き出し）と API（/api/*）を同一 Worker で配信する。
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "next-gen-cleaning-robot-demo",
+  "account_id": "9c5183bedab008ccef3581056752fa6f",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+
+  // 開発用の既定値。本番は env.production で上書きする。
+  "vars": {
+    "ENVIRONMENT": "development",
+    "SESSION_EXPIRE_HOURS": "24"
+  },
+
+  // D1 の database_id は未作成のためプレースホルダ。
+  // `wrangler d1 create next_gen_cleaning_robot_demo` で作成後に差し替える。
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "next_gen_cleaning_robot_demo",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Next.js の静的書き出し（frontend/out）を配信する。/api/* のみ Worker が先に処理する。
+  "assets": {
+    "directory": "../frontend/out",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api", "/api/*"]
+  },
+
+  // JST 03:00 = UTC 18:00（前日）の日次リセット（デモ版仕様）。
+  "triggers": {
+    "crons": ["0 18 * * *"]
+  },
+
+  "env": {
+    "production": {
+      "vars": {
+        "ENVIRONMENT": "production",
+        "SESSION_EXPIRE_HOURS": "24"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "next_gen_cleaning_robot_demo",
+          "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "assets": {
+        "directory": "../frontend/out",
+        "binding": "ASSETS",
+        "run_worker_first": ["/api", "/api/*"]
+      },
+      "triggers": {
+        "crons": ["0 18 * * *"]
+      },
+      "routes": [
+        {
+          "pattern": "next-gen-cleaning-robot-demo.rictaworks.jp",
+          "custom_domain": true
+        }
+      ]
+    }
+  }
+}

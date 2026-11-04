@@ -69,11 +69,13 @@ TDD サイクル: **plan → red test → coding → green test**
 
 ### デモ版（現在の実装）
 
-- **フロントエンド**: Next.js 15 (App Router) + TypeScript + Tailwind CSS
-- **バックエンド**: FastAPI (Python)
-- **データベース**: SQLite（デモ版固定・毎日 JST 03:00 自動リセット）
+- **フロントエンド**: Next.js 15 (App Router・静的書き出し) + TypeScript + Tailwind CSS
+- **バックエンド**: Cloudflare Workers + Hono (TypeScript)。`worker/` に配置
+- **データベース**: Cloudflare D1（SQLite 互換・毎日 JST 03:00 自動リセット。スキーマは `worker/migrations/`）
+- **配信**: Workers Assets（フロントエンドと `/api/*` を同一 Worker が配信）
 - **認証**: なし（セッション ID のみ、Cookie: httponly/samesite=lax）
 - **アイコン**: Font Awesome
+- 旧構成（FastAPI・Vercel・Railway）は 2026-11 に移行。`backend/` 等は移行前の残置物
 
 ### 本番版（将来対応）
 
@@ -97,26 +99,25 @@ TDD サイクル: **plan → red test → coding → green test**
 ## 開発サーバー起動
 
 ```bash
-# バックエンド（ポート 8000）
-pip install -r backend/requirements.txt
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+# フロントエンド静的書き出し（worker が frontend/out を配信する）
+cd frontend && npm ci && npm run build
 
-# フロントエンド（ポート 3000）
-cd frontend && npm install && npm run dev
+# Worker（API + ローカル D1）（ポート 8787）
+cd worker && npm ci && npm run db:migrate:local && npm run dev
 
-# 一括起動（Docker Compose）
-docker compose up
+# フロントエンド開発サーバー（ポート 3000。/api は 8787 へ転送）
+cd frontend && npm run dev
 ```
 
-環境変数は `.env` を参照（`DATABASE_URL`, `CORS_ORIGINS`, `SESSION_EXPIRE_HOURS` 等）。
+環境変数は `.env.example` を参照（開発時の `API_ORIGIN` のみ）。Worker の設定は `worker/wrangler.jsonc`。
 
 ---
 
 ## デプロイ先
 
-- **フロントエンド**: Vercel（無料プラン）
-- **バックエンド・管理画面**: Render または Railway（無料プラン）
+- **フロントエンドと API**: Cloudflare Workers（Workers Assets + D1）。`worker/wrangler.jsonc` の `env.production` が本番設定
 - **ドメイン**: rictaworks.jp のサブドメイン
+- 旧: Vercel（フロントエンド）・Railway（FastAPI）は 2026-10-22 から停止中。移行完了後に撤去する
 
 ---
 

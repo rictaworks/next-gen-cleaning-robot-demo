@@ -1,13 +1,16 @@
 """
 PR #001 backend integration tests.
-Target: development server at http://localhost:8000
+Target: development server (wrangler dev) at http://localhost:8787/api
+  (別ポートで起動した場合は環境変数 API_BASE_URL で上書きする)
 Run: pytest test/pr001/test_backend.py -v
 """
+
+import os
 
 import pytest
 import httpx
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8787/api")
 COOKIES: dict[str, str] = {}
 
 
